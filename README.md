@@ -8,7 +8,8 @@ Old School RuneScape has a closed player-driven economy with ~4,000 tradeable it
 
 | Step | What | Where |
 |---|---|---|
-| Collect | Daily 24h average price and volume for every item, plus player hiscores | `osrs_collector.R`, run by GitHub Actions |
+| Collect | Daily 24h average price and volume for every item, plus player hiscores | `osrs_collector.R`, daily on GitHub Actions |
+| Collect | Concurrent players online, split by members / F2P / seasonal / Deadman | `osrs_players.R`, hourly on GitHub Actions |
 | Store | Append-only CSV files | `data/` |
 | Analyse | Margins, liquidity, forecasting, event studies | coming |
 | Present | Power BI dashboard and blog posts | coming |
@@ -20,6 +21,7 @@ The collector runs every day at 08:17 UTC (`.github/workflows/collect.yml`) and 
 - `data/prices_daily.csv`: `date, id, name, avg_high, avg_low, vol_high, vol_low, source`. `date` is the UTC day the 24h window ends. `source` is `daily` (snapshot) or `backfill`.
 - `data/items.csv`: item dimension table (id, name, members, buy limit, alch values).
 - `data/hiscores_daily.csv`: `date, player, skill, rank, level, xp`.
+- `data/players_hourly.csv`: `timestamp_utc, total, main_game, members, f2p, seasonal, deadman, worlds_online`, read from the official world list. These are **concurrent** players at the time of the snapshot, not unique daily players, which Jagex does not publish. Daily activity is estimated as the mean and peak of the hourly snapshots.
 
 ## Sources
 
