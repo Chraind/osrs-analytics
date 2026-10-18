@@ -48,3 +48,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# local cache written by the monitors
+osrs_mapping.rds

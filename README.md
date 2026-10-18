@@ -16,6 +16,12 @@ Old School RuneScape has a closed player-driven economy with ~4,000 tradeable it
 
 The collector runs every day at 08:17 UTC (`.github/workflows/collect.yml`) and commits new data back to this repository. On its first run it also backfills up to a year of daily history for a watchlist of items.
 
+## Monitors
+
+Interactive scripts run by hand while playing, separate from the automated pipeline.
+
+- `monitors/herblore_monitor.R` (v1): live profitability of two Herblore production chains, Bastion potions (XP route) and Prayer potions (profit route). It pulls the current order book, applies the 2% GE tax, equipment effects and service fees, prints netted vs instant vs worst-case margins, computes a break-even "tripwire" price for the dominant input, and costs the remaining road to level 99 from the player's live hiscores. Used during a real training run that gained ~2.8M Herblore XP while growing the bank from ~34M to ~50M gp.
+
 ## Data
 
 - `data/prices_daily.csv`: `date, id, name, avg_high, avg_low, vol_high, vol_low, source`. `date` is the UTC day the 24h window ends. `source` is `daily` (snapshot) or `backfill`.
