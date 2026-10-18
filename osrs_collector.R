@@ -127,7 +127,10 @@ PRICES <- file.path(DATA, "prices_daily.csv")
 
 collect_prices <- function(items) {
   raw  <- fetch("/24h")
-  day  <- utc_date(raw$timestamp) + 1     # window ENDS the day after it starts
+  # The /24h window is the 24 hours before the request, so it is labelled
+  # with the UTC date it ENDS on: the date of this run. Backfill rows use
+  # the same convention (bucket start + 1 day).
+  day  <- as.Date(Sys.time(), tz = "UTC")
   if (day %in% dates_in(PRICES)) {
     log_msg("prices for ", day, " already stored - skipping")
     return(invisible(NULL))
