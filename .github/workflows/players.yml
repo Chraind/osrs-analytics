@@ -1,0 +1,41 @@
+# Hourly OSRS player count snapshot.
+name: OSRS player count
+
+on:
+  schedule:
+    - cron: "7 * * * *"      # every hour at :07 UTC (GitHub may run it a few minutes late)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-commit          # never push at the same time as the daily collector
+  cancel-in-progress: false
+
+jobs:
+  count:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install packages
+        run: Rscript -e 'install.packages("httr")'
+
+      - name: Snapshot player count
+        run: Rscript osrs_players.R
+
+      - name: Commit
+        run: |
+          git config user.name  "osrs-collector"
+          git config user.email "actions@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet && exit 0
+          git commit -m "players: $(date -u '+%F %H:00')"
+          git pull --rebase origin main
+          git push
