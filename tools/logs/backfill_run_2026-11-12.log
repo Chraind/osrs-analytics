@@ -1,0 +1,11 @@
+﻿# Backfill run log (sanitized)
+Snapshot taken: 2026-11-12 20:30 local
+Items completed: 56 of 4663
+Errors logged: 5
+
+## Error lines (timestamp, item id, message)
+2026-11-12T20:24:13  id=10344  The operation has timed out.
+2026-11-12T20:24:44  id=20011  The operation has timed out.
+2026-11-12T20:25:16  id=12424  The operation has timed out.
+2026-11-12T20:25:47  id=12437  The operation has timed out.
+2026-11-12T20:26:18  id=23345  The operation has timed out.
