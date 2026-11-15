@@ -17,6 +17,20 @@ Running log of the plan, decisions and progress. Newest entries at the top.
 
 ## Log
 
+### 2026-11-15: outage check (partly confirmed by public reports)
+- **Reported 2026-11-09 to 2026-11-10:** a major infrastructure failure took RuneScape and OSRS offline for about four hours, followed by an emergency rollback. Sources (search snippets, not opened in full): https://massivelyop.com/2026/11/10/runescape-and-osrs-performed-an-emergency-rollback-yesterday-evening-after-an-incident/ and https://runescape.wiki/?diff=37235228 (login-server PSA).
+- **Matches our data:** the 2026-11-09 dip to about 27k fits this window. It may be a real outage rather than a bad read; this needs checking against the wiki PSA times.
+- **Reported October 2026:** worlds taken offline after a bug killed players and deleted gear (GamesRadar, dated 7 Oct 2026). Before our player data starts on 2026-10-18.
+- **Not explained:** the 2026-11-03 total of 0. No source found yet.
+- **Caveat:** these are search snippets. Full posts not read. The official Jagex post for the November incident was not found.
+
+### 2026-11-15: player-count check ("drop of about 4,000")
+- **Not confirmed.** Daily mean total players stay between about 104k and 125k across 2026-10-19 to 2026-11-12. No sustained drop.
+- **Cannot detect a 4,000 change.** Each day has 3–7 samples taken at irregular hours. Hourly swings reach 50k+ within hours, so a 4k shift is below the noise.
+- **Two artifacts to fix:** total = 0 at 2026-11-03 01:31 (failed read), and a dip to about 27k on 2026-11-09 (partial read). Exclude or flag these.
+- **Link to World of Warcraft:** not verified. Source of the 4,000 figure needed.
+- **Fix needed for any trend:** sample at fixed UTC hours, or compare same-hour samples. Otherwise the time-of-day cycle dominates.
+
 ### 2026-11-12: environment and backfill restart
 - **R 4.5.1 installed** by you. Not yet on PATH in the current shell; open a new terminal to use `Rscript`.
 - **First backfill attempt failed.** Every request timed out at 30 s. Single-request timing was erratic: 42 s on one item, then 0.1 s and 0.4 s on others, so the API was slow but not blocking. Stopped the run.
@@ -53,12 +67,15 @@ Running log of the plan, decisions and progress. Newest entries at the top.
 - Timeouts: the first run had every request time out at 30 s (see the 2026-11-12 entry above). Fixed by raising the timeout to 120 s with retries.
 - Errors so far in the current run: see `backfill_errors.log` (sanitized copy in `tools/logs/`).
 
-**Validation plan (not yet run).**
-1. Row count per item is at most 365.
-2. No duplicate `(date, id)` keys within the backfill.
-3. Overlap with `prices_daily.csv`: compare values for the same `(date, id)`; report the match rate.
-4. Confirm the most recent point is complete, since the last window may still be partly traded.
-5. Confirm the item count is close to `items.csv` (4,663).
+**Validation results (partial run, 1,537 items, 546,601 rows).**
+1. Row count per item: max 365. Pass.
+2. Duplicate `(date, id)` keys: 0. Pass.
+3. Date convention: the backfill matches the collector's own `source = backfill` rows exactly, 3,051 of 3,051 overlapping rows. Pass.
+4. **Fail: blank prices.** 62,770 rows (about 11%) have one side of the price missing.
+5. **Fail: high below low.** 44,783 rows (about 8%) have `avg_high < avg_low`. Kept as recorded, not corrected; decide a rule before analysis.
+6. **Fail: sparse history.** 162 of 1,537 items have 365 points spanning more than 400 days. "One year" holds only for liquid items. Thin items have gaps, and the data does not say which days are missing.
+7. **Open: daily snapshot disagrees with the timeseries.** Against the 37,527 overlapping `prices_daily.csv` rows, only 18.5% match on the same date. Shifting the snapshot back one day gives 84.5%. So the snapshot's date label may be one day off, or it uses a different window. Unresolved; needs a reviewer decision before merging the two sources.
+8. Item count: 1,537 of 4,663 so far, still running. Coverage check pending.
 
 **Limitations.**
 - The script omits items that fail after 3 attempts. The error log lists them, so they can be retried.
