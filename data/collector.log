@@ -291,3 +291,5 @@
 2026-11-23 20:12:57  stored hiscores for Cyrotion 
 2026-11-23 20:12:58  ---- run end ---- 
 2026-11-23 21:12:02  [players] total 121256 (members 112979, f2p 8220, seasonal 0) on 353 worlds 
+2026-11-24 05:53:15  [players] request failed: there is no package called ‘curl’ 
+2026-11-24 05:53:15  [players] world list unavailable (status none) 
